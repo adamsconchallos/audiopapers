@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "audiopapers"
+version = "0.1.0"
+description = "Turn Markdown/EPUB/URL/text into a chaptered .m4b audiobook via any OpenAI-compatible TTS provider"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Adams Ceballos-Concha" }]
+keywords = ["tts", "audiobook", "accessibility", "m4b", "text-to-speech"]
+dependencies = [
+    "imageio-ffmpeg>=0.5",
+    "mutagen>=1.47",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://github.com/adamsconchallos/audiopapers"
+Repository = "https://github.com/adamsconchallos/audiopapers"
+
+[project.scripts]
+audiopapers = "audiopapers.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["audiopapers*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::pytest.PytestDeprecationWarning",
+]

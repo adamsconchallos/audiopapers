@@ -1,0 +1,52 @@
+# Brainstorming companion scratch
+.superpowers/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets / config
+.env
+*.key
+*.keystore
+local.properties
+
+# Generated audio (never commit large media)
+*.mp3
+*.m4b
+*.m4a
+*.wav
+_book_audio/
+_epub_audio/
+_build_audio/
+build_outputs/
+
+# Android / Gradle build products
+.gradle/
+build/
+*.apk
+*.aab
+captures/
+
+# Source documents / data
+data/
+*.epub
+*.pdf
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# AudioPapers project
+_smoke/
+audiopapers_*/
+*.egg-info/
+audiopapers.config.json
+.pytest_cache/
+
+# Internal planning docs (not for public repo)
+docs/superpowers/
