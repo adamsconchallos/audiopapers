@@ -38,9 +38,19 @@ send to the provider you choose.
 
 ## Choosing a provider
 
-Out of the box AudioPapers talks to OpenAI's TTS (`tts-1`, voice `alloy`). To
-use a different OpenAI-compatible endpoint, set three values in a config file
-(see below): `api_base_url`, `model`, and `voice`.
+AudioPapers works with **any** OpenAI-compatible TTS endpoint. Pick the setup
+that fits you:
+
+| Setup | Cost | Config file needed? |
+|-------|------|---------------------|
+| **OpenAI** (default) | Paid (~$15 / 1M characters) | **No** — just set your key and run |
+| **Local Kokoro** (self-hosted) | Free | Yes — point it at your local server |
+| **Other gateway** (institutional, DeepInfra, …) | Varies | Yes — base URL + model + voice |
+
+Out of the box AudioPapers talks to OpenAI's TTS (`tts-1`, voice `alloy`), so if
+you have an OpenAI key you can **skip the config file entirely**: set the key
+(step 2 above) and run. For anything else, create a config file (next section)
+with the values for your provider:
 
 | Provider | `api_base_url` | `model` | example `voice` |
 |----------|----------------|---------|-----------------|
@@ -53,11 +63,20 @@ JSON body works.
 
 ## Config file
 
-Copy the example and edit it (the real `audiopapers.config.json` is gitignored):
+**Only needed if you're not using OpenAI.** The quickest way to create one:
 
 ```bash
-cp audiopapers.config.example.json audiopapers.config.json
+audiopapers --init
 ```
+
+That writes a starter `audiopapers.config.json` to your per-user config folder
+(`%APPDATA%\audiopapers\` on Windows, `~/.config/audiopapers/` elsewhere) and
+prints the path. Open it, set `api_base_url`, `model`, and `voice` for your
+provider (see the tables above), and it applies to every run, from any folder.
+
+AudioPapers looks for the config in the folder you run from first, then that
+per-user folder; the first one found wins. To keep it somewhere else, pass
+`--config /path/to/config.json` on each run. The starter looks like:
 
 ```json
 {
@@ -70,6 +89,9 @@ cp audiopapers.config.example.json audiopapers.config.json
   "author": "AudioPapers"
 }
 ```
+
+If you cloned the repo instead of installing with pipx, you can copy the starter
+file by hand instead: `cp audiopapers.config.example.json audiopapers.config.json`.
 
 Every value can be overridden per run with a CLI flag (`--voice`, `--bitrate`,
 `--chapter-level`, `--author`, `--cover`, `--title`, `--out`, `--include`).
@@ -97,6 +119,9 @@ Every value can be overridden per run with a CLI flag (`--voice`, `--bitrate`,
   the provider doesn't offer. Check the provider's docs for valid values.
 - **Can't reach the endpoint** — verify `api_base_url` (must end in `/v1`) and that
   a local server, if any, is running.
+- **Config seems ignored** — the file must be named `audiopapers.config.json` and
+  sit in the folder you run `audiopapers` from or your per-user config folder (or
+  pass `--config <path>`). `audiopapers --init` puts one in the right place.
 
 ## Development
 

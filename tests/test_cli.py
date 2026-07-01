@@ -67,3 +67,20 @@ def test_main_passes_provider_from_config(tmp_path, monkeypatch):
     assert rc == 0
     assert captured["kw"]["api_base_url"] == "http://localhost:8880/v1"
     assert captured["kw"]["model"] == "kokoro"
+
+
+def test_main_init_writes_config(tmp_path):
+    import json
+    dest = tmp_path / "audiopapers.config.json"
+    rc = cli.main(["--init", "--config", str(dest)])
+    assert rc == 0
+    assert dest.exists()
+    assert json.loads(dest.read_text(encoding="utf-8"))["api_base_url"].endswith("/v1")
+
+
+def test_main_init_does_not_overwrite(tmp_path):
+    dest = tmp_path / "audiopapers.config.json"
+    dest.write_text('{"voice": "mine"}', encoding="utf-8")
+    rc = cli.main(["--init", "--config", str(dest)])
+    assert rc == 0
+    assert dest.read_text(encoding="utf-8") == '{"voice": "mine"}'

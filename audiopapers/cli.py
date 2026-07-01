@@ -7,7 +7,7 @@ import os
 import sys
 
 from audiopapers.adapters import select_adapter
-from audiopapers.config import load_config
+from audiopapers.config import load_config, user_config_path, write_starter_config
 from audiopapers.packaging import build_audiobook  # noqa: F401 — re-exported; tests monkeypatch this name
 from audiopapers.segments import Segment
 
@@ -30,8 +30,10 @@ def build_out_path(source: str, out_dir: str) -> str:
 def main(argv: list[str] | None = None) -> int:
     """Parse args, select adapter, build the audiobook; return 0 on success, 1 if no segments."""
     ap = argparse.ArgumentParser(description="Build a chaptered .m4b audiobook.")
-    ap.add_argument("source", help="Markdown/EPUB/text file or URL")
+    ap.add_argument("source", nargs="?", help="Markdown/EPUB/text file or URL")
     ap.add_argument("--config", default=None, help="path to config JSON")
+    ap.add_argument("--init", action="store_true",
+                    help="write a starter config to your per-user config folder and exit")
     ap.add_argument("--out", default=None, help="output folder (default: config out_dir)")
     ap.add_argument("--voice", default=None)
     ap.add_argument("--bitrate", type=int, default=None, help="AAC kbps (48/32/24)")
@@ -41,6 +43,18 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--cover", default=None, help="cover image path")
     ap.add_argument("--include", default="", help="epub-only: comma-separated spine idrefs")
     args = ap.parse_args(argv)
+
+    if args.init:
+        dest = args.config or user_config_path()
+        if write_starter_config(dest):
+            print(f"wrote starter config to {dest}")
+            print("edit api_base_url, model, and voice for your provider, then run: audiopapers <file>")
+        else:
+            print(f"config already exists at {dest} (left unchanged)")
+        return 0
+
+    if not args.source:
+        ap.error("source is required (or use --init to create a config)")
 
     cfg = load_config(args.config)
     out_dir = args.out or cfg.out_dir
